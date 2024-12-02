@@ -32,11 +32,8 @@ func Worker(in <-chan int64, out chan<- int64) {
 	// 2. Функция Worker
 	// ...
 	defer close(out)
-	for {
-		num, ok := <-in
-		if !ok {
-			return
-		}
+	for num := range in {
+		time.Sleep(1 * time.Millisecond) //задержка 1 миллисекунда
 		out <- num
 	}
 }
@@ -79,13 +76,13 @@ func main() {
 	// ...
 	for i := 0; i < NumOut; i++ {
 		wg.Add(1)
-		go func(i int) {
+		go func(in <-chan int64, i int64) {
 			defer wg.Done()
-			for num := range outs[i] {
+			for num := range in {
 				chOut <- num // Отправляем число в результирующий канал
 				amounts[i]++ // Увеличиваем счетчик для текущего канала
 			}
-		}(i)
+		}(outs[i], int64(i))
 	}
 
 	go func() {
