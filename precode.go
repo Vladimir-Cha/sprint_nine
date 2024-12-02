@@ -33,8 +33,8 @@ func Worker(in <-chan int64, out chan<- int64) {
 	// ...
 	defer close(out)
 	for num := range in {
-		time.Sleep(1 * time.Millisecond) //задержка 1 миллисекунда
 		out <- num
+		time.Sleep(1 * time.Millisecond) //задержка 1 миллисекунда
 	}
 }
 
